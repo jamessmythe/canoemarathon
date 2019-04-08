@@ -1,5 +1,7 @@
 ## MRC CANOE MARATHON RESULTS APP
 
+#see https://cultureofinsight.shinyapps.io/canoemarathon for the app
+
 This app was designed to make canoe marathon race results more accessible and useful.
 
 Racers, coaches, clubs and parents can use it as a record of their racing results, or learn more about different races and competitors.
