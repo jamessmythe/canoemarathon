@@ -8,4 +8,4 @@ Racers, coaches, clubs and parents can use it as a record of their racing result
 
 The data behind this app also gives the MRC a powerful tool to analyse and understand participation over time, by region and among different groups of people and craft.
 
-If you want a copy of the database please email marathon.secretary@britishcanoeing.org.uk
+If you want a copy of the database please email marathon.secretary@vol.britishcanoeing.org.uk
