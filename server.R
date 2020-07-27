@@ -21,6 +21,8 @@ server <- function(input, output, session) {
   # Big Database table with reactive filtering
   output$table <- DT::renderDataTable({
     
+    req(bigtable())
+    
     validate(need(nrow(bigtable())>0, message = "Please select items from the filters above"))
     
     DT::datatable(
@@ -162,4 +164,20 @@ server <- function(input, output, session) {
     rownames = FALSE)
   }
   )
+  
+  observeEvent(input$go, {
+    
+    withBusyIndicatorServer("go", {
+      
+      changes <- tibble(`Old Name` = input$name_combo, 
+                        `First name` = toupper(input$ch_firstname), 
+                        Surname = toupper(input$ch_surname))
+      
+      gs_key(sheet_key) %>% gs_add_row(ws = "names", input = changes)
+      
+    })
+  
+  })
+  
+  
 }

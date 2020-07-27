@@ -5,3 +5,4 @@ trackingscript.js
 .RData
 .Rhistory
 app.Rproj
+.secrets

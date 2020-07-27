@@ -2,6 +2,8 @@
 fluidPage(
   
   tags$head(includeHTML("GA.html")), #links to CofI client GA script
+  tags$head(useShinyjs()),
+  tags$head(tags$style(appCSS)),
   
   theme = shinytheme("flatly"),
   
@@ -33,7 +35,7 @@ fluidPage(
                                   "Pick one or more seasons:",
                                   c("All",
                                     unique(menus$Season)),
-                                  selected = "2018/19",
+                                  selected = "2019/20",
                                   multiple = TRUE)
                ),
                column(4,
@@ -88,7 +90,7 @@ fluidPage(
     
     tabPanel("Hasler Final Qualification", 
              fluidRow(
-               column(7, tags$h3("Qualifying Status by Paddler & Craft, 2018/19 Season"), tags$h5("Please note the list does not include Assessment Races which count towards Final qualification.")),
+               column(7, tags$h3("Qualifying Status by Paddler & Craft, 2019/20 Season"), tags$h5("Please note the list does not include Assessment Races which count towards Final qualification.")),
                column(5,selectInput("qualclub", "Choose Club: (hit backspace to clear and type in a club abbreviation)", c(unique(qualstatus$Club)), selected = "WOR", multiple = FALSE))
              ),
              fluidRow(column(12, tableOutput("qualification"))
@@ -101,6 +103,30 @@ fluidPage(
                column(5,selectInput("qualreg", "Choose Region:", c(unique(clubdata$Region)), selected = "SO", multiple = FALSE))
              ),
              fluidRow(column(12, tableOutput("clubpts"))
+             )
+    ),
+    
+    tabPanel("Request a Name Change", 
+             fluidRow(
+               column(12, 
+                      tags$h3("Request name change in the database"), 
+                      tags$br(),
+                      tags$h5("Please note: names are entered manually on or before race days and are subject to some input error."), 
+                      tags$br(),
+                      tags$h5("You can request that we correct instances of a name, but these requests will be checked manually before being updated"),
+                      tags$h5("YOU WON'T GET A CONFIRMATION EMAIL - PLEASE WAIT A WEEK OR SO THEN CHECK THIS DATABASE"),
+                      tags$br(),
+                      tags$h5("You cannot request a club or class change with this form: to do so,"),
+                      tags$h5("please email Race Records Officer Graham Warland at graham.warland@gmail.com"),
+                      tags$br(),
+                      selectInput("name_combo", "Choose name to edit. Use backspace to type and search", c(unique(names$Name2)), multiple = FALSE),
+                      textInput("ch_surname", "Surname (as it should appear in database)", placeholder = "This will be converted to CAPS"),
+                      textInput("ch_firstname", "First Name (as it should appear in database)", placeholder = "This will be converted to CAPS"))
+             ),
+             tags$hr(),
+             
+             withBusyIndicatorUI(
+             actionButton("go", "Submit", class = "btn-success")
              )
     )
   )

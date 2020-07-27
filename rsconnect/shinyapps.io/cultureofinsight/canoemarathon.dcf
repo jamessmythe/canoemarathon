@@ -5,9 +5,9 @@ account: cultureofinsight
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 847274
-bundleId: 1995387
+bundleId: 3440171
 url: https://cultureofinsight.shinyapps.io/canoemarathon/
-when: 1554743162.73986
+when: 1595839329.41857
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: app.R|app2019.R|canoeingClubPts.RDS|canoeingresultsDBase.RDS
+ignoredFiles: .RData|canoeingClubPts.RDS|canoeingresultsDBase.RDS|archive

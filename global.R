@@ -4,31 +4,55 @@
 
 library(shiny)
 library(shinythemes)
-library(tidyverse) # group of packages for data wrangling and visualisation (ggplot2)
-library(lubridate) # convert date to R date format
-library(DT) # Data Tables package for interactive html tables
+library(tidyverse)
+library(lubridate)
+library(DT)
 library(googledrive)
 library(openxlsx)
+library(shinyjs)
+
+source("helpers.R")
+
+#-----AUTHENTICATION ------
+# options(gargle_oauth_cache = ".secrets") #sets the '.secrets' folder as destination for authentication codes
+# gargle::gargle_oauth_cache() #checks this setting
+# drive_auth() #triggers authentication code creation
+# list.files(".secrets/") #checks new code is there
+# 
+# drive_auth(cache = ".secrets")
+# 
+# options(
+#   gargle_oauth_cache = ".secrets",
+#   gargle_oauth_email = TRUE
+# )
+# 
+# drive_find(n_max = 5) #checks connection to drive by retrieving 5 file details
+
+drive_auth(cache = ".secrets", email = TRUE)
+
 
 #-------------DATASET LOADING--------------------
 
 drive_download(as_dribble("canoeingresultsDBase.RDS"), overwrite = T)
 drive_download(as_dribble("canoeingClubPts.RDS"), overwrite = T)
 
-data <- read_rds("canoeingresultsDBase.RDS") %>% 
+data <- read_rds("canoeingresultsDBase.RDS")%>% 
   filter(Outcome != "DNS")
 
 clubdata <- read_rds("canoeingClubPts.RDS")
 
 main_data <- data %>% 
-  rename(`P/D` = P.D) %>% 
   mutate(Outcome = case_when(is.na(Outcome) ~ "Finish", TRUE ~ Outcome)) %>% 
-  #mutate(Date = dmy(Date)) %>%
   mutate(Time = ymd_hms(Time)) %>% 
   mutate(Time = format(Time, format = "%H:%M:%S")) %>%
-  select(RaceRegion, Event, Date, Season, Race, Position, Name, Club, Class, Time, Points, Outcome, `P/D`) %>% 
+  select(RaceRegion, Event, Date, Season, Race, Position, Name, Club, Class, Time, Points, Outcome, PD) %>% 
   arrange(desc(Season), Event, Date, Race, Position) %>% 
   mutate(Name2 = paste(Name, "(", Club, ")"))
+
+names <- main_data %>% 
+  select(Name2) %>% 
+  unique() %>% 
+  arrange(Name2)
 
 table_data <- main_data %>% 
   select(-Name2, -RaceRegion)
@@ -94,7 +118,7 @@ rankings <- main_data %>%
   summarise(aveFinish = mean(Position, na.rm = TRUE))
 
 qualstatus <- main_data %>% 
-  filter(Season == "2018/19", str_detect(Race, "Div") == TRUE, !Outcome %in% c("DNS", "RTD", "DSQ", "rtd", "dsq", "dns")) %>% 
+  filter(Season == "2019/20", str_detect(Race, "Div") == TRUE, !Outcome %in% c("DNS", "RTD", "DSQ", "rtd", "dsq", "dns")) %>% 
   mutate(Qualname = paste(Name, "-", Club, "-", Class)) %>% 
   select(RaceRegion, Event, Season, Race, Qualname, Club) %>% 
   group_by(Qualname) %>% 
@@ -111,7 +135,7 @@ clubdata <- clubdata %>%
   arrange(Region, Date)
 
 promos <- main_data %>% 
-  select(Season, Event, Name, Club, `P/D`, Date) %>% 
-  filter(str_detect(`P/D`,"P")) %>% 
+  select(Season, Event, Name, Club, `PD`, Date) %>% 
+  filter(str_detect(`PD`,"P")) %>% 
   filter(Date > today()-months(1)) %>% #change to 1 month from start of season
-  arrange(`P/D`, Date)
+  arrange(`PD`, Date)
